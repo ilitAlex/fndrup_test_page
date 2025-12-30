@@ -2,6 +2,7 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Test Donation Page</title>
 
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-5PY4HBPJEJ"></script>
@@ -11,6 +12,8 @@
       gtag('js', new Date());
       gtag('config', 'G-5PY4HBPJEJ');
     </script>
+
+    <script>window.fundraiseup_livemode = false;</script>
 
     <script>(function(w,d,s,n,a){if(!w[n]){var l='call,catch,on,once,set,then,track'
     .split(','),i,o=function(n){return'function'==typeof n?o.l.push([arguments])&&o
@@ -24,46 +27,28 @@
 
     <h1>Тестовая страница пожертвований</h1>
     
-    <a href="#XJKDHSTQ" class="donation-button">Пожертвовать $700</a>
+    <a href="#XJKDHSTQ" class="donation-button" style="display: inline-block; padding: 20px; background: #007bff; color: #fff; text-decoration: none; border-radius: 5px;">
+        Пожертвовать $700
+    </a>
 
     <script>
-        // Использование JS API для отслеживания открытия чекаута
-        FundraiseUp.on('checkout.open', function() {
-            console.log('Checkout opened!');
-            
-            // Отправка события в GA4 через gtag
-            gtag('event', 'fundraiseup_checkout_open', {
-                'event_category': 'engagement',
-                'event_label': 'Donation Button Click'
-            });
-
-            // Альтернатива через dataLayer (если используешь GTM)
-            window.dataLayer.push({
-                'event': 'checkout_opened_custom'
-            });
-        });
-
-        // Отслеживание успешного пожертвования
         FundraiseUp.on('checkout.success', function(details) {
-            console.log('Donation success!', details);
-            
-            // Если сумма пожертвования $700
-            if (details.donation.amount >= 700) {
+            // Если донат >= 700, отправляем событие покупки
+            if (parseFloat(details.donation.amount) >= 700) {
                 gtag('event', 'purchase', {
                     'transaction_id': details.donation.id,
-                    'value': 700,
+                    'value': parseFloat(details.donation.amount),
                     'currency': 'USD',
-                    'items': [{
-                        'item_name': 'Donation',
-                        'item_category': 'Fundraise Up'
-                    }]
+                    'items': [{ 'item_name': 'Donation' }]
                 });
+                console.log("Purchase event sent to GA!");
             }
         });
     </script>
 
 </body>
 </html>
+
 
 
 
