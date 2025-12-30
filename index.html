@@ -48,7 +48,7 @@
             console.log('Donation success!', details);
             
             // Если сумма пожертвования $700
-            if (details.donation.amount === 700) {
+            if (details.donation.amount >= 700) {
                 gtag('event', 'purchase', {
                     'transaction_id': details.donation.id,
                     'value': 700,
@@ -64,5 +64,6 @@
 
 </body>
 </html>
+
 
 
