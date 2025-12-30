@@ -10,10 +10,14 @@
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
-      gtag('config', 'G-5PY4HBPJEJ');
+      gtag('config', 'G-5PY4HBPJEJ', { 'debug_mode': true });
+      console.log("GA4: Инициализация выполнена (ID: G-5PY4HBPJEJ)");
     </script>
 
-    <script>window.fundraiseup_livemode = false;</script>
+    <script>
+        window.fundraiseup_livemode = false;
+        console.log("Fundraise Up: Тестовый режим принудительно включен");
+    </script>
 
     <script>(function(w,d,s,n,a){if(!w[n]){var l='call,catch,on,once,set,then,track'
     .split(','),i,o=function(n){return'function'==typeof n?o.l.push([arguments])&&o
@@ -25,30 +29,55 @@
 </head>
 <body>
 
-    <h1>Тестовая страница пожертвований</h1>
+    <h1 style="font-family: sans-serif;">Тестовая страница пожертвований</h1>
     
-    <a href="#XJKDHSTQ" class="donation-button" style="display: inline-block; padding: 20px; background: #007bff; color: #fff; text-decoration: none; border-radius: 5px;">
+    <a href="#XJKDHSTQ" class="donation-button" style="display: inline-block; padding: 20px; background: #007bff; color: #fff; text-decoration: none; border-radius: 5px; font-family: sans-serif; font-weight: bold;">
         Пожертвовать $700
     </a>
 
     <script>
-        FundraiseUp.on('checkout.success', function(details) {
-            // Если донат >= 700, отправляем событие покупки
-            if (parseFloat(details.donation.amount) >= 700) {
+        // Используем событие donationComplete, так как оно содержит все данные для purchase
+        FundraiseUp.on('donationComplete', function(details) {
+            
+            var amount = parseFloat(details.donation.amount);
+            console.log("API: Получено событие donationComplete. Сумма: $" + amount);
+
+            // Проверка условия ТЗ: сумма от $700
+            if (amount >= 700) {
+                console.log("Условие ТЗ выполнено (сумма >= 700). Отправка данных в GA4...");
+
+                // Формируем событие purchase согласно структуре из JSON и Step 5 доки
                 gtag('event', 'purchase', {
                     'transaction_id': details.donation.id,
-                    'value': parseFloat(details.donation.amount),
-                    'currency': 'USD',
-                    'items': [{ 'item_name': 'Donation' }]
+                    'value': amount,
+                    'currency': details.donation.currency || 'USD',
+                    'items': [{
+                        'item_name': 'Donation',
+                        'item_id': details.donation.id,
+                        'price': amount,
+                        'quantity': 1
+                    }],
+                    // Дополнительные параметры из Step 5 документации
+                    'campaign_name': details.campaign.name,
+                    'payment_method': details.donation.paymentMethod,
+                    'is_recurring': details.donation.recurring,
+                    'supporter_id': details.supporter.id
                 });
-                console.log("Purchase event sent to GA!");
+
+                console.log("GA4: Событие 'purchase' успешно отправлено!");
+            } else {
+                console.log("GA4: Событие 'purchase' не отправлено (сумма меньше 700).");
             }
+        });
+
+        // Дополнительный лог для проверки открытия чекаута
+        FundraiseUp.on('checkoutOpen', function(details) {
+            console.log("API: Чекаут открыт (checkoutOpen)");
         });
     </script>
 
 </body>
 </html>
-
 
 
 
