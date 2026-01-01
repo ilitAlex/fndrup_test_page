@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -29,24 +29,24 @@
 </head>
 <body>
 
-    <h1 style="font-family: sans-serif;">Тестовая страница пожертвований</h1>
+    <h1 style="font-family: sans-serif;">Test donation page</h1>
     
     <a href="#XJKDHSTQ" class="donation-button" style="display: inline-block; padding: 20px; background: #007bff; color: #fff; text-decoration: none; border-radius: 5px; font-family: sans-serif; font-weight: bold;">
-        Пожертвовать $700
+        Donate $700
     </a>
 
     <script>
-        // Используем событие donationComplete, так как оно содержит все данные для purchase
+        // event donationComplete, to access purchase
         FundraiseUp.on('donationComplete', function(details) {
             
             var amount = parseFloat(details.donation.amount);
-            console.log("API: Получено событие donationComplete. Сумма: $" + amount);
+            console.log("API: Event donationComplete received. Sum: $" + amount);
 
-            // Проверка условия ТЗ: сумма от $700
+            // If amount $700 +
             if (amount >= 700) {
-                console.log("Условие ТЗ выполнено (сумма >= 700). Отправка данных в GA4...");
+                console.log("Amount is $700+");
 
-                // Формируем событие purchase согласно структуре из JSON и Step 5 доки
+                // Forming purchase event
                 gtag('event', 'purchase', {
                     'transaction_id': details.donation.id,
                     'value': amount,
@@ -57,27 +57,28 @@
                         'price': amount,
                         'quantity': 1
                     }],
-                    // Дополнительные параметры из Step 5 документации
+                    // Custom parameters
                     'campaign_name': details.campaign.name,
                     'payment_method': details.donation.paymentMethod,
                     'is_recurring': details.donation.recurring,
                     'supporter_id': details.supporter.id
                 });
 
-                console.log("GA4: Событие 'purchase' успешно отправлено!");
+                console.log("GA4: 'purchase' event is sent sucessfuly!");
             } else {
-                console.log("GA4: Событие 'purchase' не отправлено (сумма меньше 700).");
+                console.log("GA4: 'purchase' event was not sent  (amount is less than 700).");
             }
         });
 
-        // Дополнительный лог для проверки открытия чекаута
+        // Additional log for checking checkout opening
         FundraiseUp.on('checkoutOpen', function(details) {
-            console.log("API: Чекаут открыт (checkoutOpen)");
+            console.log("API: Check out is open (checkoutOpen)");
         });
     </script>
 
 </body>
 </html>
+
 
 
 
