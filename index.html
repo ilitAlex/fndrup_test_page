@@ -11,12 +11,12 @@
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-5PY4HBPJEJ', { 'debug_mode': true });
-      console.log("GA4: Инициализация выполнена (ID: G-5PY4HBPJEJ)");
+      console.log("GA4: Initizalization complete (ID: G-5PY4HBPJEJ)");
     </script>
 
     <script>
         window.fundraiseup_livemode = false;
-        console.log("Fundraise Up: Тестовый режим принудительно включен");
+        console.log("Fundraise Up: Test mode on");
     </script>
 
     <script>(function(w,d,s,n,a){if(!w[n]){var l='call,catch,on,once,set,then,track'
@@ -32,17 +32,31 @@
     <h1 style="font-family: sans-serif;">Test donation page</h1>
     
     <a href="#XJKDHSTQ" class="donation-button" style="display: inline-block; padding: 20px; background: #007bff; color: #fff; text-decoration: none; border-radius: 5px; font-family: sans-serif; font-weight: bold;">
-        Donate $700
+        Donate
     </a>
 
     <script>
-        // event donationComplete, to access purchase
+
+        // Triggered when the donation modal opens (Funnel start)
+        FundraiseUp.on('checkoutOpen', function(details) {
+            console.log("API: Checkout modal opened (checkoutOpen)");
+            
+            // Standard GA4 event for funnel analysis
+            gtag('event', 'begin_checkout', {
+                'event_category': 'Donation',
+                'campaign_name': details.campaign.name || 'General',
+                'campaign_id': details.campaign.id
+            });
+        });
+
+        
+        // Triggered when the donation is successful (Funnel completion)
         FundraiseUp.on('donationComplete', function(details) {
             
             var amount = parseFloat(details.donation.amount);
             console.log("API: Event donationComplete received. Sum: $" + amount);
 
-            // If amount $700 +
+            // If amount $700+
             if (amount >= 700) {
                 console.log("Amount is $700+");
 
@@ -78,6 +92,7 @@
 
 </body>
 </html>
+
 
 
 
